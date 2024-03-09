@@ -1,6 +1,8 @@
 /**
- *  Compute Bessel function Jn using GNU Scientific Library
- *  implementation, and plot using matplotplusplus.
+ *  Compute Bessel function Jn by integrating Bessel's equation
+ *  with Boost::numeric::odeint. Also compute Jn using GNU Scientific
+ *  Library implementation, then plot both using matplotplusplus
+ *  to compare the results.
  */
 
 #include <utility>
