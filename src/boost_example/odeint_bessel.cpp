@@ -31,7 +31,7 @@ int main() {
   bessel bf{};
 
   // state_initialization
-  state_type x(2);
+  state_type x(3);
   x[0] = 0.0;
   x[1] = 0.0;
   x[2] = 0.0;
