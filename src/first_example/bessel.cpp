@@ -33,7 +33,7 @@ public:
     // x[0] = t, x[1] = f(t), x[2] = f'(t)
     dxdt[0] = 1;
     dxdt[1] = x[2];
-    dxdt[2] = -x[1] / x[0] + (BESSEL_ORDER / (x[0] * x[0]) - 1) * x[1];
+    dxdt[2] = -x[2] / x[0] + (BESSEL_ORDER / (x[0] * x[0]) - 1) * x[1]; // TODO: Fix divide by zero w/ helper.
   }
 };
 
@@ -76,9 +76,10 @@ Results_T runOdeint(double xMin, double xMax, double step) {
   controlled_stepper_type controlled_stepper;
   integrate_adaptive(controlled_stepper, bf, x, xMin, xMax, step, push_back_state_and_time(x_vec, times));
 
-  ResultSeq_T resultsFOnly(size(x_vec));
-  std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
-                 [](const State_T &state) { return state[1]; });
+  ResultSeq_T resultsFOnly(size(times));
+  for (size_t i = 0; i < size(times); i++) {
+    resultsFOnly[i] = x_vec[i][1];
+  }
 
   return std::make_pair(resultsFOnly, times);
 }
