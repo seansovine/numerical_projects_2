@@ -84,8 +84,8 @@ Results_T runOdeint(double xMin, double xMax, double step) {
 
   Bessel bf{};
 
-  // Use asimple constant stepper and integrator.
-  // This is because we want the observe to be called
+  // Use a simple constant stepper and integrator.
+  // This is because we want the observer to be called
   // at regular intervals. (See odeint docs.)
   runge_kutta4<State_T> stepper;
   integrate_const(stepper, bf, x, xMin, xMax, step, push_back_state_and_time(x_vec, times));
