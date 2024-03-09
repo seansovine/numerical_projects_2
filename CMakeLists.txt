@@ -31,3 +31,7 @@ target_link_libraries(first_example PUBLIC matplot GSL::gsl)
 add_executable(boost_example src/boost_example/odeint.cpp)
 
 target_link_libraries(boost_example Boost::boost)
+
+add_executable(odeint_bessel src/boost_example/odeint_bessel.cpp)
+
+target_link_libraries(odeint_bessel Boost::boost)
