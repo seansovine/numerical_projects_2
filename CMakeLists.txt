@@ -18,8 +18,16 @@ add_subdirectory(matplotplusplus)
 
 find_package(GSL REQUIRED)
 
+find_package(Boost 1.74 REQUIRED)
+
 # First example project
 
 add_executable(first_example src/first_example/bessel.cpp)
 
 target_link_libraries(first_example PUBLIC matplot GSL::gsl)
+
+# Boost odeint example project
+
+add_executable(boost_example src/boost_example/odeint.cpp)
+
+target_link_libraries(boost_example Boost::boost)
