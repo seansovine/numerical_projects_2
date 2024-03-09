@@ -1,3 +1,8 @@
+/**
+ *  Compute Bessel function Jn using GNU Scientific Library
+ *  implementation, and plot using matplotplusplus.
+*/
+
 #include <gsl/gsl_sf_bessel.h>
 #include <matplot/matplot.h>
 
