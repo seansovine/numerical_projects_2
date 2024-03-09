@@ -16,7 +16,7 @@
 constexpr int BESSEL_ORDER = 4;
 
 // Start a little past 0 to avoid singularity.
-constexpr double T_MIN = 2;
+constexpr double T_MIN = 0.01;
 constexpr double T_MAX = 20.0;
 constexpr double T_STEP = 0.001;
 
