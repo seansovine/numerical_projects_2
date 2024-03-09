@@ -87,23 +87,30 @@ Results_T runOdeint(double xMin, double xMax, double step) {
 
 int main() {
   matplot::hold(matplot::on);
+  matplot::grid(matplot::on);
 
-  /* Compute and plot using GSL. */
+  // Compute and plot using odeint.
 
-  auto Jn = [](double x) {
+  Results_T odeintResult = runOdeint(X_MIN, X_MAX, X_STEP);
+
+  ResultSeq_T &time = odeintResult.second;
+  ResultSeq_T &odeiVals = odeintResult.first;
+
+  matplot::plot(time, odeiVals, "-b")->line_width(1);
+
+  // Compute and plot using GSL.
+
+  auto Jn = [](double x) -> double {
     gsl_sf_result result{};
     gsl_sf_bessel_Jn_e(BESSEL_ORDER, x, &result);
     return result.val;
   };
 
-  matplot::fplot(Jn, std::array<double, 2>{X_MIN, X_MAX}, "-r")->line_width(1);
-  matplot::grid(matplot::on);
+  ResultSeq_T jnVals = matplot::transform(time, Jn);
 
-  /* Compute and plot using odeint. */
+  matplot::plot(time, jnVals, "-r")->line_width(1);
 
-  Results_T odeintResult = runOdeint(X_MIN, X_MAX, X_STEP);
-
-  /* Show the plot. */
+  // Show the plot.
 
   matplot::show();
   return 0;
