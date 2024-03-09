@@ -100,10 +100,9 @@ public:
     runge_kutta4<State_T> stepper;
     integrate_const(stepper, bf, x, xMin, xMax, step, StateAndTimeObserver(x_vec, times));
 
-    ResultSeq_T resultsFOnly(size(times));
-    for (size_t i = 0; i < size(times); i++) {
-      resultsFOnly[i] = x_vec[i][0];
-    }
+    ResultSeq_T resultsFOnly{};
+    std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
+                   [](const State_T &x) { return x[0]; });
 
     return std::make_pair(resultsFOnly, times);
   }
