@@ -3,6 +3,8 @@
  *  implementation, and plot using matplotplusplus.
  */
 
+#include <utility>
+
 #include <boost/numeric/odeint.hpp>
 #include <gsl/gsl_sf_bessel.h>
 #include <matplot/matplot.h>
@@ -13,17 +15,19 @@ constexpr int BESSEL_ORDER = 4;
 
 constexpr double X_MIN = 0.0;
 constexpr double X_MAX = 200.0;
+constexpr double X_STEP = 0.01;
 
-/* Helper definitions. */
+/* Definitions for odeint. */
 
 typedef std::vector<double> State_T;
-typedef std::vector<State_T> Results_T;
+typedef std::vector<double> ResultSeq_T;
+typedef std::pair<ResultSeq_T, ResultSeq_T> Results_T;
 
 // Function object for RHS of x' = f(x).
-class bessel {
+class Bessel {
 
 public:
-  bessel() {}
+  Bessel() {}
 
   void operator()(const State_T &x, State_T &dxdt, const double /* t */) {
     // x[0] = t, x[1] = f(t), x[2] = f'(t)
@@ -49,6 +53,7 @@ struct push_back_state_and_time {
 
 Results_T runOdeint(double xMin, double xMax, double step) {
   using namespace boost::numeric::odeint;
+  typedef std::vector<State_T> X_Results_T_;
 
   // state_initialization
   State_T x(3);
@@ -57,10 +62,10 @@ Results_T runOdeint(double xMin, double xMax, double step) {
   x[2] = 0.0;
 
   // Results containers.
-  Results_T x_vec;
-  std::vector<double> times;
+  X_Results_T_ x_vec;
+  ResultSeq_T times;
 
-  bessel bf{};
+  Bessel bf{};
 
   // define_adapt_stepper
   typedef runge_kutta_cash_karp54<State_T> error_stepper_type;
@@ -71,21 +76,34 @@ Results_T runOdeint(double xMin, double xMax, double step) {
   controlled_stepper_type controlled_stepper;
   integrate_adaptive(controlled_stepper, bf, x, xMin, xMax, step, push_back_state_and_time(x_vec, times));
 
-  // TOOD: Transform it to just return f values.
-  return x_vec;
+  ResultSeq_T resultsFOnly(size(x_vec));
+  std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
+                 [](const State_T &state) { return state[1]; });
+
+  return std::make_pair(resultsFOnly, times);
 }
 
+/* Main function. */
+
 int main() {
+  matplot::hold(matplot::on);
+
+  /* Compute and plot using GSL. */
+
   auto Jn = [](double x) {
     gsl_sf_result result{};
     gsl_sf_bessel_Jn_e(BESSEL_ORDER, x, &result);
     return result.val;
   };
 
-  matplot::hold(matplot::on);
-
   matplot::fplot(Jn, std::array<double, 2>{X_MIN, X_MAX}, "-r")->line_width(1);
   matplot::grid(matplot::on);
+
+  /* Compute and plot using odeint. */
+
+  Results_T odeintResult = runOdeint(X_MIN, X_MAX, X_STEP);
+
+  /* Show the plot. */
 
   matplot::show();
   return 0;
