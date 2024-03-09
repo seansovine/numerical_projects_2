@@ -38,7 +38,7 @@ typedef std::vector<double> State_T;
 typedef std::vector<double> ResultSeq_T;
 typedef std::pair<ResultSeq_T, ResultSeq_T> Results_T;
 
-struct Bessel {
+struct BesselRhs {
   // Function object for RHS of x' = f(x).
 
   void operator()(const State_T &x, State_T &dxdt, const double t) {
@@ -92,7 +92,7 @@ public:
     ResultSeq_T times;
 
     // RHS function object.
-    Bessel bf{};
+    BesselRhs bf{};
 
     // We use a constant stepper and integrator.
     // This is because we want the observer to be called
