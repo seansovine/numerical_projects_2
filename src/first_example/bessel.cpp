@@ -33,7 +33,7 @@ public:
     // x[0] = t, x[1] = f(t), x[2] = f'(t)
     dxdt[0] = 1;
     dxdt[1] = x[2];
-    dxdt[2] = -x[2] / x[0] + (BESSEL_ORDER / (x[0] * x[0]) - 1) * x[1]; // TODO: Fix divide by zero w/ helper.
+    dxdt[2] = -x[2] / x[0] + (BESSEL_ORDER / (x[0] * x[0]) - 1) * x[1]; // TODO: Singularity at 0.
   }
 };
 
@@ -58,7 +58,7 @@ Results_T runOdeint(double xMin, double xMax, double step) {
   // state_initialization
   State_T x(3);
   x[0] = 0.0;
-  x[1] = 0.0;
+  x[1] = 0.01; // A little past 0 to avoid singularity.
   x[2] = 0.0;
 
   // Results containers.
