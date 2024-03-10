@@ -74,6 +74,7 @@ public:
     // we initialize w/ known values from GSL for verification purposes.
 
     GslJn gslJn{};
+
     x[0] = gslJn(T_MIN);
     x[1] = (gslJn(T_MIN + H) - gslJn(T_MIN - H)) / (2 * H);
   }
@@ -81,13 +82,12 @@ public:
   Results_T run(double xMin, double xMax, double step) {
     using namespace boost::numeric::odeint;
 
-    BesselRhs bf{};
     X_Results_T_ x_vec;
     ResultSeq_T times;
 
     // With constant stepper and integrator, observer is called at regular intervals.
     runge_kutta4<State_T> stepper;
-    integrate_const(stepper, bf, x, xMin, xMax, step, StateAndTimeObserver(x_vec, times));
+    integrate_const(stepper, BesselRhs{}, x, xMin, xMax, step, StateAndTimeObserver(x_vec, times));
 
     ResultSeq_T resultsFOnly{};
     std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
