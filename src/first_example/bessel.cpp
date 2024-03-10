@@ -7,22 +7,23 @@
 
 #include <utility>
 
-#include <boost/numeric/odeint.hpp>
 #include <gsl/gsl_sf_bessel.h>
 #include <matplot/matplot.h>
 
-/* Parameters. */
+#include "odeint_runner.hpp"
+
+// Parameters.
 
 constexpr int BESSEL_ORDER = 4;
 
-// Starting a little past 0 to avoid singularity.
+// Start past 0 to avoid singularity.
 constexpr double T_MIN = 0.01;
 constexpr double T_MAX = 20.0;
 constexpr double T_STEP = 0.001;
 
-/* Definition for GSL. */
+// GSL helper.
 
-struct GslJn {
+struct GslBesseln {
   double operator()(double x) {
     gsl_sf_result result{};
     gsl_sf_bessel_Jn_e(BESSEL_ORDER, x, &result);
@@ -30,13 +31,7 @@ struct GslJn {
   }
 };
 
-/* Definitions for odeint. */
-
-// For State_T x, x[0] represents f(t) and x[1] represents f'(t).
-typedef std::vector<double> State_T;
-
-typedef std::vector<double> ResultSeq_T;
-typedef std::pair<ResultSeq_T, ResultSeq_T> Results_T;
+// Odeint RHS.
 
 struct BesselRhs {
   // RHS of equation x' = f(x).
@@ -47,57 +42,7 @@ struct BesselRhs {
   }
 };
 
-template <typename Rhs>
-class OdeintRunner {
-  typedef std::vector<State_T> X_Results_T_;
-  State_T x;
-
-  // For estimating derivative.
-  static constexpr double H = 0.00001;
-
-  struct StateAndTimeObserver {
-    std::vector<State_T> &m_states;
-    std::vector<double> &m_times;
-
-    StateAndTimeObserver(std::vector<State_T> &states, std::vector<double> &times)
-        : m_states(states), m_times(times) {}
-
-    void operator()(const State_T &x, double t) {
-      m_states.push_back(x);
-      m_times.push_back(t);
-    }
-  };
-
-public:
-  OdeintRunner() : x(2) {
-    // Since we're starting past x = 0, where values are known, we
-    // initialize w/ known values from GSL for verification purposes.
-
-    GslJn gslJn{};
-
-    x[0] = gslJn(T_MIN);
-    x[1] = (gslJn(T_MIN + H) - gslJn(T_MIN - H)) / (2 * H);
-  }
-
-  Results_T run(double xMin, double xMax, double step) {
-    using namespace boost::numeric::odeint;
-
-    X_Results_T_ x_vec;
-    ResultSeq_T times;
-
-    // With constant stepper and integrator, observer is called at regular intervals.
-    runge_kutta4<State_T> stepper;
-    integrate_const(stepper, Rhs{}, x, xMin, xMax, step, StateAndTimeObserver(x_vec, times));
-
-    ResultSeq_T resultsFOnly{};
-    std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
-                   [](const State_T &x) { return x[0]; });
-
-    return std::make_pair(resultsFOnly, times);
-  }
-};
-
-/* Matplot helper. */
+// Matplot helper.
 
 struct MatplotStateManager {
   MatplotStateManager() {
@@ -109,14 +54,14 @@ struct MatplotStateManager {
   ~MatplotStateManager() { matplot::show(); }
 };
 
-/* Main function. */
+// Main.
 
 int main() {
-  Results_T odeintResult = OdeintRunner<BesselRhs>{}.run(T_MIN, T_MAX, T_STEP);
+  Results_T odeintResult = OdeintRunner<BesselRhs, GslBesseln>(T_MIN, T_MAX, T_STEP).run();
   const ResultSeq_T &time = odeintResult.second;
   const ResultSeq_T &odeintVals = odeintResult.first;
 
-  ResultSeq_T gslJnVals = matplot::transform(time, GslJn{});
+  ResultSeq_T gslJnVals = matplot::transform(time, GslBesseln{});
 
   {
     // Configures plot and shows on scope exit.
