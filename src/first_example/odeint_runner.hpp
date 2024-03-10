@@ -8,7 +8,8 @@
 // For State_T x, x[0] represents f(t) and x[1] represents f'(t).
 typedef std::array<double, 2> State_T;
 typedef std::vector<double> ResultSeq_T;
-typedef std::pair<ResultSeq_T, ResultSeq_T> Results_T;
+typedef ResultSeq_T TimeSeq_T;
+typedef std::pair<ResultSeq_T, TimeSeq_T> Results_T;
 
 namespace detail {
 
@@ -54,7 +55,7 @@ Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step) {
   namespace boostode = boost::numeric::odeint;
 
   X_Results_T_ x_vec;
-  ResultSeq_T times;
+  TimeSeq_T times;
 
   // With constant stepper and integrator, observer is called at regular intervals.
   boostode::runge_kutta4<State_T> stepper;
@@ -64,7 +65,7 @@ Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step) {
   std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
                  [](const State_T &x) { return x[0]; });
 
-  return std::make_pair(resultsFOnly, times);
+  return std::make_pair(std::move(resultsFOnly), std::move(times));
 }
 
 #endif
