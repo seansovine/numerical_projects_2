@@ -9,9 +9,6 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
-# set(CMAKE_SOURCE_DIR src)
-# set(PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
 # Third-party dependencies
 
 add_subdirectory(matplotplusplus)
@@ -24,7 +21,7 @@ find_package(Boost 1.74 REQUIRED)
 
 add_executable(first_example src/first_example/bessel.cpp)
 
-target_link_libraries(first_example PUBLIC matplot GSL::gsl)
+target_link_libraries(first_example PUBLIC matplot GSL::gsl Boost::boost)
 
 # Boost odeint example project
 
