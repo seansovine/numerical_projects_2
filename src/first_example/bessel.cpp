@@ -70,8 +70,8 @@ class OdeintBesselRunner {
 
 public:
   OdeintBesselRunner() : x(2) {
-    // Due to singularity in equation RHS, we're starting past x = 0, where values are known.
-    // We initialize w/ known values from GSL for verification purposes.
+    // Since we're starting past x = 0, where values are known,
+    // we initialize w/ known values from GSL for verification purposes.
 
     GslJn gslJn{};
     x[0] = gslJn(T_MIN);
@@ -81,10 +81,9 @@ public:
   Results_T run(double xMin, double xMax, double step) {
     using namespace boost::numeric::odeint;
 
+    BesselRhs bf{};
     X_Results_T_ x_vec;
     ResultSeq_T times;
-
-    BesselRhs bf{};
 
     // With constant stepper and integrator, observer is called at regular intervals.
     runge_kutta4<State_T> stepper;
@@ -119,7 +118,7 @@ int main() {
 
     // Compute using odeint and add result to plot.
 
-    Results_T odeintResult = OdeintBesselRunner().run(T_MIN, T_MAX, T_STEP);
+    Results_T odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
 
     const ResultSeq_T &time = odeintResult.second;
     const ResultSeq_T &odeiVals = odeintResult.first;
