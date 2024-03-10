@@ -27,13 +27,14 @@ public:
   Results_T run();
 
 private:
+  typedef std::vector<State_T> X_Results_T_;
+
   struct StateAndTimeObserver;
 
   const double tMin;
   const double tMax;
   const double step;
 
-  typedef std::vector<State_T> X_Results_T_;
   State_T x;
 
   // For estimating derivative.
