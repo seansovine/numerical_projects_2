@@ -6,7 +6,7 @@
 #include <vector>
 
 // For State_T x, x[0] represents f(t) and x[1] represents f'(t).
-typedef std::vector<double> State_T;
+typedef std::array<double, 2> State_T;
 typedef std::vector<double> ResultSeq_T;
 typedef std::pair<ResultSeq_T, ResultSeq_T> Results_T;
 
@@ -39,14 +39,14 @@ template <RHS Rhs, Initializer Init>
 class OdeintRunner {
 
 public:
-  OdeintRunner() : x(2) { x = Init{}.init(); }
+  OdeintRunner() { x = Init{}.init(); }
 
   Results_T run(double inTMin, double inTMax, double inStep);
 
 private:
   typedef std::vector<State_T> X_Results_T_;
 
-  State_T x;
+  State_T x{};
 };
 
 template <RHS Rhs, Initializer Init>

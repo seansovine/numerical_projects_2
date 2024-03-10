@@ -31,7 +31,7 @@ struct GslBesseln {
   }
 };
 
-// Odeint RHS.
+// Odeint setup.
 
 struct BesselRhs {
   // RHS of equation x' = f(x).
@@ -46,17 +46,17 @@ struct BesselOdeInitializer {
   // Since we're starting past x = 0, where values are known, we
   // initialize w/ known values from GSL for verification purposes.
 
-  BesselOdeInitializer() : initState(2) {}
+  BesselOdeInitializer() {}
 
   State_T init() {
-    GslBesseln gslJn{};
     initState[0] = gslJn(T_MIN);
     initState[1] = (gslJn(T_MIN + H) - gslJn(T_MIN - H)) / (2 * H);
     return initState;
   }
 
 private:
-  State_T initState;
+  GslBesseln gslJn{};
+  State_T initState{};
   // For estimating derivative.
   static constexpr double H = 0.00001;
 };
