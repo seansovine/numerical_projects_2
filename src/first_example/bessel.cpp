@@ -70,10 +70,10 @@ class OdeintBesselRunner {
 
 public:
   OdeintBesselRunner() : x(2) {
-    GslJn gslJn{};
-
-    // Due to singularity in equation we're starting past x = 0, for which values are known.
+    // Due to singularity in equation RHS, we're starting past x = 0, where values are known.
     // We initialize w/ known values from GSL for verification purposes.
+
+    GslJn gslJn{};
     x[0] = gslJn(T_MIN);
     x[1] = (gslJn(T_MIN + H) - gslJn(T_MIN - H)) / (2 * H);
   }
@@ -98,30 +98,40 @@ public:
   }
 };
 
+/* Matplot helper. */
+
+struct MatplotStateManager {
+  MatplotStateManager() {
+    // Initialize plot.
+    matplot::hold(matplot::on);
+    matplot::grid(matplot::on);
+  }
+
+  ~MatplotStateManager() { matplot::show(); }
+};
+
 /* Main function. */
 
 int main() {
-  // Initialize plot.
-  matplot::hold(matplot::on);
-  matplot::grid(matplot::on);
+  {
+    // Creates and shows plot.
+    MatplotStateManager mgr{};
 
-  // Compute using odeint and add result to plot.
+    // Compute using odeint and add result to plot.
 
-  OdeintBesselRunner runner{};
-  Results_T odeintResult = runner.run(T_MIN, T_MAX, T_STEP);
+    Results_T odeintResult = OdeintBesselRunner().run(T_MIN, T_MAX, T_STEP);
 
-  const ResultSeq_T &time = odeintResult.second;
-  const ResultSeq_T &odeiVals = odeintResult.first;
+    const ResultSeq_T &time = odeintResult.second;
+    const ResultSeq_T &odeiVals = odeintResult.first;
 
-  matplot::plot(time, odeiVals, "-b")->line_width(1);
+    matplot::plot(time, odeiVals, "-b")->line_width(1);
 
-  // Compute using GSL and add result to plot.
+    // Compute using GSL and add result to plot.
 
-  GslJn gslJn{};
-  ResultSeq_T jnVals = matplot::transform(time, gslJn);
+    ResultSeq_T jnVals = matplot::transform(time, GslJn{});
 
-  matplot::plot(time, jnVals, "-r")->line_width(1);
+    matplot::plot(time, jnVals, "-r")->line_width(1);
+  }
 
-  matplot::show();
   return 0;
 }
