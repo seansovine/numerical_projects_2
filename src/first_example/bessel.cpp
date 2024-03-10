@@ -112,24 +112,18 @@ struct MatplotStateManager {
 /* Main function. */
 
 int main() {
+  Results_T odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
+  const ResultSeq_T &time = odeintResult.second;
+  const ResultSeq_T &odeintVals = odeintResult.first;
+
+  ResultSeq_T gslJnVals = matplot::transform(time, GslJn{});
+
   {
-    // Creates and shows plot.
+    // Configures plot and shows on scope exit.
     MatplotStateManager mgr{};
 
-    // Compute using odeint and add result to plot.
-
-    Results_T odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
-
-    const ResultSeq_T &time = odeintResult.second;
-    const ResultSeq_T &odeiVals = odeintResult.first;
-
-    matplot::plot(time, odeiVals, "-b")->line_width(1);
-
-    // Compute using GSL and add result to plot.
-
-    ResultSeq_T jnVals = matplot::transform(time, GslJn{});
-
-    matplot::plot(time, jnVals, "-r")->line_width(1);
+    matplot::plot(time, odeintVals, "-b")->line_width(1);
+    matplot::plot(time, gslJnVals, "-r")->line_width(1);
   }
 
   return 0;
