@@ -14,31 +14,15 @@ template <class Rhs, class Initializer>
 class OdeintRunner {
 
 public:
-  OdeintRunner(double inTMin, double inTMax, double inStep) : tMin{inTMin}, tMax{inTMax}, step{inStep}, x(2) {
-    // Since we're starting past x = 0, where values are known, we
-    // initialize w/ known values from GSL for verification purposes.
+  OdeintRunner() : x(2) { x = Initializer{}.init(); }
 
-    Initializer initFunc{};
-
-    x[0] = initFunc(tMin);
-    x[1] = (initFunc(tMin + H) - initFunc(tMin - H)) / (2 * H);
-  }
-
-  Results_T run();
+  Results_T run(double inTMin, double inTMax, double inStep);
 
 private:
   typedef std::vector<State_T> X_Results_T_;
-
   struct StateAndTimeObserver;
 
-  const double tMin;
-  const double tMax;
-  const double step;
-
   State_T x;
-
-  // For estimating derivative.
-  static constexpr double H = 0.00001;
 };
 
 template <class Rhs, class Initializer>
@@ -56,7 +40,7 @@ struct OdeintRunner<Rhs, Initializer>::StateAndTimeObserver {
 };
 
 template <class Rhs, class Initializer>
-Results_T OdeintRunner<Rhs, Initializer>::run() {
+Results_T OdeintRunner<Rhs, Initializer>::run(double tMin, double tMax, double step) {
   using namespace boost::numeric::odeint;
 
   X_Results_T_ x_vec;

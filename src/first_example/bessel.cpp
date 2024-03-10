@@ -42,7 +42,26 @@ struct BesselRhs {
   }
 };
 
-using OdeintBesselRunner = OdeintRunner<BesselRhs, GslBesseln>;
+struct BesselOdeInitializer {
+  // Since we're starting past x = 0, where values are known, we
+  // initialize w/ known values from GSL for verification purposes.
+
+  BesselOdeInitializer() : initState(2) {}
+
+  State_T init() {
+    GslBesseln gslJn{};
+    initState[0] = gslJn(T_MIN);
+    initState[1] = (gslJn(T_MIN + H) - gslJn(T_MIN - H)) / (2 * H);
+    return initState;
+  }
+
+private:
+  State_T initState;
+  // For estimating derivative.
+  static constexpr double H = 0.00001;
+};
+
+using OdeintBesselRunner = OdeintRunner<BesselRhs, BesselOdeInitializer>;
 
 // Matplot helper.
 
@@ -59,7 +78,7 @@ struct MatplotStateManager {
 // Main.
 
 int main() {
-  Results_T odeintResult = OdeintBesselRunner(T_MIN, T_MAX, T_STEP).run();
+  Results_T odeintResult = OdeintBesselRunner().run(T_MIN, T_MAX, T_STEP);
   const ResultSeq_T &time = odeintResult.second;
   const ResultSeq_T &odeintVals = odeintResult.first;
 
