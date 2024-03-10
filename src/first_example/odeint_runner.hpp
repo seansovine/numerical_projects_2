@@ -10,11 +10,19 @@ typedef std::vector<double> State_T;
 typedef std::vector<double> ResultSeq_T;
 typedef std::pair<ResultSeq_T, ResultSeq_T> Results_T;
 
-template <class Rhs, class Initializer>
+template <typename T>
+concept RHS = requires(T a, const State_T &x, State_T &dxdt, const double t) { a(x, dxdt, t); };
+
+template <typename T>
+concept Initializer = requires(T a) {
+  { a.init() } -> std::same_as<State_T>;
+};
+
+template <RHS Rhs, Initializer Init>
 class OdeintRunner {
 
 public:
-  OdeintRunner() : x(2) { x = Initializer{}.init(); }
+  OdeintRunner() : x(2) { x = Init{}.init(); }
 
   Results_T run(double inTMin, double inTMax, double inStep);
 
@@ -25,8 +33,8 @@ private:
   State_T x;
 };
 
-template <class Rhs, class Initializer>
-struct OdeintRunner<Rhs, Initializer>::StateAndTimeObserver {
+template <RHS Rhs, Initializer Init>
+struct OdeintRunner<Rhs, Init>::StateAndTimeObserver {
   std::vector<State_T> &m_states;
   std::vector<double> &m_times;
 
@@ -39,8 +47,8 @@ struct OdeintRunner<Rhs, Initializer>::StateAndTimeObserver {
   }
 };
 
-template <class Rhs, class Initializer>
-Results_T OdeintRunner<Rhs, Initializer>::run(double tMin, double tMax, double step) {
+template <RHS Rhs, Initializer Init>
+Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step) {
   using namespace boost::numeric::odeint;
 
   X_Results_T_ x_vec;
