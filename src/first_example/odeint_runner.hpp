@@ -10,6 +10,23 @@ typedef std::vector<double> State_T;
 typedef std::vector<double> ResultSeq_T;
 typedef std::pair<ResultSeq_T, ResultSeq_T> Results_T;
 
+namespace detail {
+
+struct StateAndTimeObserver {
+  std::vector<State_T> &m_states;
+  std::vector<double> &m_times;
+
+  StateAndTimeObserver(std::vector<State_T> &states, std::vector<double> &times)
+      : m_states(states), m_times(times) {}
+
+  void operator()(const State_T &x, double t) {
+    m_states.push_back(x);
+    m_times.push_back(t);
+  }
+};
+
+} // namespace detail
+
 template <typename T>
 concept RHS = requires(T a, const State_T &x, State_T &dxdt, const double t) { a(x, dxdt, t); };
 
@@ -28,35 +45,20 @@ public:
 
 private:
   typedef std::vector<State_T> X_Results_T_;
-  struct StateAndTimeObserver;
 
   State_T x;
 };
 
 template <RHS Rhs, Initializer Init>
-struct OdeintRunner<Rhs, Init>::StateAndTimeObserver {
-  std::vector<State_T> &m_states;
-  std::vector<double> &m_times;
-
-  StateAndTimeObserver(std::vector<State_T> &states, std::vector<double> &times)
-      : m_states(states), m_times(times) {}
-
-  void operator()(const State_T &x, double t) {
-    m_states.push_back(x);
-    m_times.push_back(t);
-  }
-};
-
-template <RHS Rhs, Initializer Init>
 Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step) {
-  using namespace boost::numeric::odeint;
+  namespace boostode = boost::numeric::odeint;
 
   X_Results_T_ x_vec;
   ResultSeq_T times;
 
   // With constant stepper and integrator, observer is called at regular intervals.
-  runge_kutta4<State_T> stepper;
-  integrate_const(stepper, Rhs{}, x, tMin, tMax, step, StateAndTimeObserver(x_vec, times));
+  boostode::runge_kutta4<State_T> stepper;
+  boostode::integrate_const(stepper, Rhs{}, x, tMin, tMax, step, detail::StateAndTimeObserver(x_vec, times));
 
   ResultSeq_T resultsFOnly{};
   std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
