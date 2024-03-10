@@ -78,7 +78,7 @@ struct MatplotStateManager {
 // Main.
 
 int main() {
-  Results_T odeintResult = OdeintBesselRunner().run(T_MIN, T_MAX, T_STEP);
+  Results_T odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
   const ResultSeq_T &time = odeintResult.second;
   const ResultSeq_T &odeintVals = odeintResult.first;
 
