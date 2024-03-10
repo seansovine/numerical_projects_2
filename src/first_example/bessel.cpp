@@ -42,6 +42,8 @@ struct BesselRhs {
   }
 };
 
+using OdeintBesselRunner = OdeintRunner<BesselRhs, GslBesseln>;
+
 // Matplot helper.
 
 struct MatplotStateManager {
@@ -57,7 +59,7 @@ struct MatplotStateManager {
 // Main.
 
 int main() {
-  Results_T odeintResult = OdeintRunner<BesselRhs, GslBesseln>(T_MIN, T_MAX, T_STEP).run();
+  Results_T odeintResult = OdeintBesselRunner(T_MIN, T_MAX, T_STEP).run();
   const ResultSeq_T &time = odeintResult.second;
   const ResultSeq_T &odeintVals = odeintResult.first;
 
