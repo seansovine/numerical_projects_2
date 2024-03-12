@@ -7,7 +7,8 @@ int main()
 {
   using namespace Eigen;
 
-  srand((unsigned int)time(0));
+  // Seed random number generator
+  srand(static_cast<unsigned>(time(0)));
 
   DiagonalMatrix<double, 3> diag(4, 2, 1);
   Matrix3d noise = Matrix3d::Random() * 0.1;
