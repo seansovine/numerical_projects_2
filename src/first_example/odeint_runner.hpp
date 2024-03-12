@@ -23,8 +23,7 @@ struct StateAndTimeObserver
 
   StateAndTimeObserver(std::vector<State_T> &states, std::vector<double> &times)
       : m_states(states), m_times(times)
-  {
-  }
+  {}
 
   void operator()(const State_T &x, double t)
   {
