@@ -17,6 +17,13 @@ A complication of the ODE method is that the Bessel equation is singular at 0.
 To work around this for the purpose of demonstration, we will start past 0 and use
 the values produced by GSL as initial conditions for the ODE.
 
+## Second project - power method with Eigen
+
+This is a small example demonstrating the use of the Eigen matrix libary. It
+perturbs a 3 x 3 diagonal matrix with unequal entries by a small random matrix,
+then uses the power method to compute the perturbed first eigenvector and
+prints out the results.
+
 ## Preliminary steps
 
 Project infrastructure:
@@ -36,11 +43,12 @@ See the matplotplusplus readme file for using the library with CMake.
 
 ## Dependencies
 
-Initially:
+Libraries:
 
 + matplotplusplus
 + GSL
 + Boost
++ Eigen
 
 ## Next ideas
 
