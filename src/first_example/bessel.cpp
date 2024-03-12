@@ -23,8 +23,10 @@ constexpr double T_STEP = 0.001;
 
 // GSL helper.
 
-struct GslBesseln {
-  double operator()(double x) {
+struct GslBesseln
+{
+  double operator()(double x)
+  {
     gsl_sf_result result{};
     gsl_sf_bessel_Jn_e(BESSEL_ORDER, x, &result);
     return result.val;
@@ -33,22 +35,26 @@ struct GslBesseln {
 
 // Odeint setup.
 
-struct BesselRhs {
+struct BesselRhs
+{
   // RHS of equation x' = f(x).
-  void operator()(const State_T &x, State_T &dxdt, const double t) {
+  void operator()(const State_T &x, State_T &dxdt, const double t)
+  {
     dxdt[0] = x[1];
     dxdt[1] = -(1 / (t * t)) * (t * x[1] + (t * t - BESSEL_ORDER * BESSEL_ORDER) * x[0]);
     // NOTE: Equation has singularity at 0.
   }
 };
 
-struct BesselOdeInitializer {
+struct BesselOdeInitializer
+{
   // Since we're starting past x = 0, where values are known, we
   // initialize w/ known values from GSL for verification purposes.
 
   BesselOdeInitializer() {}
 
-  State_T init() {
+  State_T init()
+  {
     initState[0] = gslJn(T_MIN);
     initState[1] = (gslJn(T_MIN + H) - gslJn(T_MIN - H)) / (2 * H);
     return initState;
@@ -65,8 +71,10 @@ using OdeintBesselRunner = OdeintRunner<BesselRhs, BesselOdeInitializer>;
 
 // Matplot helper.
 
-struct MatplotStateManager {
-  MatplotStateManager() {
+struct MatplotStateManager
+{
+  MatplotStateManager()
+  {
     // Initialize plot.
     matplot::hold(matplot::on);
     matplot::grid(matplot::on);
@@ -77,7 +85,8 @@ struct MatplotStateManager {
 
 // Main.
 
-int main() {
+int main()
+{
   Results_T odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
   const TimeSeq_T &time = odeintResult.second;
   const ResultSeq_T &odeintVals = odeintResult.first;
