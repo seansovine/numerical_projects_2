@@ -1,6 +1,7 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
+
 #include <iostream>
 
 int main()
@@ -19,28 +20,31 @@ int main()
   // Non-perturbed eigenvector
   Vector3d v(1, 0, 0);
 
-  // Estimate perturbed eigenvector with power method
   constexpr size_t num_iterations = 100;
   constexpr double tolerance = 1.0e-8;
   Vector3d v_last;
 
+  // Estimate perturbed eigenvector with power method
   for (size_t i = 0; i < num_iterations; i++) {
     v_last = v;
+
     v = m * v;
     v = v / v.norm();
+
     if ((v - v_last).norm() < tolerance) {
       break;
     }
   }
 
-  std::cout << "Perturbed matrix:" << std::endl << m << std::endl;
-  std::cout << std::endl;
-  std::cout << "Perturbed eigenvector:" << std::endl << v << std::endl;
-  std::cout << std::endl;
-  std::cout << "Verify m * v = " << std::endl << m * v << std::endl;
-  std::cout << std::endl;
-  std::cout << "and " << ((m * v)(0) / v(0)) << " * v = " << std::endl
+  // clang-format off
+  std::cout << "Perturbed matrix:" << std::endl << m << std::endl
+            << "Perturbed eigenvector:" << std::endl << v << std::endl
+            << std::endl
+            << "Verify m * v = " << std::endl << m * v << std::endl
+            << std::endl
+            << "and " << ((m * v)(0) / v(0)) << " * v = " << std::endl
             << ((m * v)(0) / v(0)) * v << std::endl;
+  // clang-format on
 
   return 0;
 }
