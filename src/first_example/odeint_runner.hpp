@@ -6,12 +6,12 @@
 #include <vector>
 
 // For State_T x, x[0] represents f(t) and x[1] represents f'(t).
-typedef std::array<double, 2> State_T;
+using State_T = std::array<double, 2>;
 
-typedef std::vector<double> ResultSeq_T;
-typedef ResultSeq_T TimeSeq_T;
+using ResultSeq_T = std::vector<double>;
+using TimeSeq_T = ResultSeq_T;
 
-typedef std::pair<ResultSeq_T, TimeSeq_T> Results_T;
+using Results_T = std::pair<ResultSeq_T, TimeSeq_T>;
 
 namespace detail
 {
@@ -53,7 +53,7 @@ public:
   Results_T run(double inTMin, double inTMax, double inStep);
 
 private:
-  typedef std::vector<State_T> X_Results_T_;
+  using X_Results_T_ = std::vector<State_T>;
 
   State_T x{};
 };
