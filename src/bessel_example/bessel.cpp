@@ -79,10 +79,10 @@ struct MatplotStateManager {
 // Main.
 
 int main() {
-  Results_T odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
+  const Results_T odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
   const TimeSeq_T &time = odeintResult.second;
   const ResultSeq_T &odeintVals = odeintResult.first;
-  ResultSeq_T gslJnVals = matplot::transform(time, GslBesseln{});
+  const ResultSeq_T gslJnVals = matplot::transform(time, GslBesseln{});
 
   {
     // Configures plot and shows on scope exit.
