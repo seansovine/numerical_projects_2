@@ -19,17 +19,11 @@ find_package(Boost 1.74 REQUIRED)
 
 find_package (Eigen3 3.4 REQUIRED PATHS ./eigen)
 
-# First example project
+# Bessel example project
 
 add_executable(first_example src/bessel_example/bessel.cpp)
 
 target_link_libraries(first_example PUBLIC matplot GSL::gsl Boost::boost)
-
-# Boost odeint example project
-
-add_executable(boost_example src/boost_example/odeint.cpp)
-
-target_link_libraries(boost_example Boost::boost)
 
 # Eigen example project
 
