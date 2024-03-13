@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
 echo "Running clang-format using .clang-format config file."
-# clang-format --dump-config -style=file
+
+changes=$(clang-format --dry-run -style=file -- src/**/*.{cpp,hpp} 2>&1)
 
 echo
-echo "Changes will be:"
-clang-format --dry-run -style=file -- src/**/*.{cpp,hpp}
+if [ ! -z "$changes" ]; then
+	echo "Changes will be made to fix:"
+	echo
+	echo "$changes"
+else
+	echo "No changes made."
+fi
 
 echo
-echo "Formatting:"
 clang-format -i --verbose -style=file -- src/**/*.{cpp,hpp}
