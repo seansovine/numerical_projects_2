@@ -4,8 +4,7 @@
 
 #include <iostream>
 
-int main()
-{
+int main() {
   using namespace Eigen;
 
   // Seed random number generator
@@ -37,10 +36,13 @@ int main()
   }
 
   // clang-format off
-  std::cout << "Perturbed matrix:" << std::endl << m << std::endl
-            << "Perturbed eigenvector:" << std::endl << v << std::endl
+  std::cout << "Perturbed matrix:" << std::endl
+            << m << std::endl
+            << "Perturbed eigenvector:" << std::endl
+            << v << std::endl
             << std::endl
-            << "Verify m * v = " << std::endl << m * v << std::endl
+            << "Verify m * v = " << std::endl
+            << m * v << std::endl
             << std::endl
             << "and " << ((m * v)(0) / v(0)) << " * v = " << std::endl
             << ((m * v)(0) / v(0)) * v << std::endl;

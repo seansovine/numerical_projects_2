@@ -4,9 +4,29 @@ ColumnLimit: 110
 IndentPPDirectives: BeforeHash
 AlwaysBreakTemplateDeclarations: true
 BreakBeforeBraces: Custom
-BraceWrapping:
-  AfterClass: true
-  AfterStruct: true
-  AfterFunction: true
-  AfterNamespace: true
-  SplitEmptyFunction: false
+
+# BraceWrapping:
+#   AfterClass: true
+#   AfterStruct: true
+#   AfterFunction: true
+#   AfterNamespace: true
+#   SplitEmptyFunction: false
+
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  # Headers in <> from specific external libraries.
+  - Regex:           '<(Eigen|boost|gsl)\/'
+    Priority:        3
+  # Headers in <> without extension.
+  - Regex:           '<([A-Za-z0-9\Q/-_\E])+>'
+    Priority:        4
+  # Headers in <> with extension.
+  - Regex:           '<([A-Za-z0-9.\Q/-_\E])+>'
+    Priority:        2
+  # Headers in "" with extension.
+  - Regex:           '"([A-Za-z0-9.\Q/-_\E])+"'
+    Priority:        1
+
+# ^ Borrowed from:
+#   https://stackoverflow.com/questions/55792370/how-to-create-category-for-external-headers-in-clang-format

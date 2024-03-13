@@ -12,10 +12,10 @@
 
  */
 
+#include <boost/numeric/odeint.hpp>
+
 #include <iostream>
 #include <vector>
-
-#include <boost/numeric/odeint.hpp>
 
 // rhs_function
 /* The type of container used to hold the state vector */
@@ -34,7 +34,7 @@ void harmonic_oscillator(const state_type &x, state_type &dxdt, const double /* 
 class harm_osc {
   double m_gam;
 
- public:
+public:
   harm_osc(double gam) : m_gam(gam) {}
 
   void operator()(const state_type &x, state_type &dxdt, const double /* t */) {
@@ -67,7 +67,7 @@ int main(int /* argc */, char ** /* argv */) {
 
   // state_initialization
   state_type x(2);
-  x[0] = 1.0;  // start at x=1.0, p=0.0
+  x[0] = 1.0; // start at x=1.0, p=0.0
   x[1] = 0.0;
 
   // integration
@@ -94,7 +94,8 @@ int main(int /* argc */, char ** /* argv */) {
 
   // integrate_const_loop
   const double dt = 0.01;
-  for (double t = 0.0; t < 10.0; t += dt) stepper.do_step(harmonic_oscillator, x, t, dt);
+  for (double t = 0.0; t < 10.0; t += dt)
+    stepper.do_step(harmonic_oscillator, x, t, dt);
 
   // define_adapt_stepper
   typedef runge_kutta_cash_karp54<state_type> error_stepper_type;
@@ -105,18 +106,20 @@ int main(int /* argc */, char ** /* argv */) {
   integrate_adaptive(controlled_stepper, harmonic_oscillator, x, 0.0, 10.0, 0.01);
 
   {
-    //integrate_adapt_full
+    // integrate_adapt_full
     double abs_err = 1.0e-10, rel_err = 1.0e-6, a_x = 1.0, a_dxdt = 1.0;
     controlled_stepper_type controlled_stepper(
         default_error_checker<double, range_algebra, default_operations>(abs_err, rel_err, a_x, a_dxdt));
     integrate_adaptive(controlled_stepper, harmonic_oscillator, x, 0.0, 10.0, 0.01);
-      }
+  }
 
-  //integrate_adapt_make_controlled
-  integrate_adaptive(make_controlled<error_stepper_type>(1.0e-10, 1.0e-6), harmonic_oscillator, x, 0.0, 10.0, 0.01);
+  // integrate_adapt_make_controlled
+  integrate_adaptive(make_controlled<error_stepper_type>(1.0e-10, 1.0e-6), harmonic_oscillator, x, 0.0, 10.0,
+                     0.01);
 
-  //integrate_adapt_make_controlled_alternative
-  integrate_adaptive(make_controlled(1.0e-10, 1.0e-6, error_stepper_type()), harmonic_oscillator, x, 0.0, 10.0, 0.01);
+  // integrate_adapt_make_controlled_alternative
+  integrate_adaptive(make_controlled(1.0e-10, 1.0e-6, error_stepper_type()), harmonic_oscillator, x, 0.0,
+                     10.0, 0.01);
 
 #ifdef BOOST_NUMERIC_ODEINT_CXX11
   // define_const_stepper_cpp11

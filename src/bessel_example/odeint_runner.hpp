@@ -13,20 +13,16 @@ using TimeSeq_T = ResultSeq_T;
 
 using Results_T = std::pair<ResultSeq_T, TimeSeq_T>;
 
-namespace detail
-{
+namespace detail {
 
-struct StateAndTimeObserver
-{
+struct StateAndTimeObserver {
   std::vector<State_T> &m_states;
   std::vector<double> &m_times;
 
   StateAndTimeObserver(std::vector<State_T> &states, std::vector<double> &times)
-      : m_states(states), m_times(times)
-  {}
+      : m_states(states), m_times(times) {}
 
-  void operator()(const State_T &x, double t)
-  {
+  void operator()(const State_T &x, double t) {
     m_states.push_back(x);
     m_times.push_back(t);
   }
@@ -35,18 +31,17 @@ struct StateAndTimeObserver
 } // namespace detail
 
 template <typename T>
-concept RHS = requires(T a, const State_T &x, State_T &dxdt, const double t) { a(x, dxdt, t); };
+concept RHS = requires(T a, const State_T &x, State_T &dxdt, const double t) {
+  a(x, dxdt, t);
+};
 
 template <typename T>
 concept Initializer = requires(T a) {
-  {
-    a.init()
-  } -> std::same_as<State_T>;
+  { a.init() } -> std::same_as<State_T>;
 };
 
 template <RHS Rhs, Initializer Init>
-class OdeintRunner
-{
+class OdeintRunner {
 public:
   OdeintRunner() { x = Init{}.init(); }
 
@@ -59,8 +54,7 @@ private:
 };
 
 template <RHS Rhs, Initializer Init>
-Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step)
-{
+Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step) {
   namespace boostode = boost::numeric::odeint;
 
   X_Results_T_ x_vec;
