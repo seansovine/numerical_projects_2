@@ -10,7 +10,6 @@ using State_T = std::array<double, 2>;
 
 using ResultSeq_T = std::vector<double>;
 using TimeSeq_T = ResultSeq_T;
-
 using Results_T = std::pair<ResultSeq_T, TimeSeq_T>;
 
 namespace detail {
@@ -67,7 +66,6 @@ Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step) {
   ResultSeq_T resultsFOnly{};
   std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
                  [](const State_T &x) { return x[0]; });
-
   return std::make_pair(std::move(resultsFOnly), std::move(times));
 }
 
