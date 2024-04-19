@@ -1,2 +1,4 @@
 build/
 .vscode
+thirdparty_examples/
+vendor_examples/

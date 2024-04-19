@@ -1,17 +1,18 @@
 # Numerical Projects 2
 
 This repo will contain some additional numerical computation
-projects for fun and for profit (by learning good things).
+projects for fun and for profit (by learning about some useful
+numerical computation libraries).
 
 ## First project - Bessel functions
 
-Our first goal here will be to put together some different numerical
-libraries, and demonstrate them working together. We will try the following:
+In this first small project we demonstrate the Boost odeint, GSL, and matplotplusplus
+libraries working together. We will try the following:
 
-+ Solve the equation for a Bessel function using Boost's odeint.
-+ Plot the results using matplotplusplus.
-+ Use the Bessel function calculation from Gnu Scientific Library for comparison.
-+ Compare the two
+- Solve the equation for a Bessel function using Boost's odeint.
+- Plot the results using matplotplusplus.
+- Use the Bessel function calculation from Gnu Scientific Library for comparison.
+- Compare the two.
 
 A complication of the ODE method is that the Bessel equation is singular at 0.
 To work around this for the purpose of demonstration, we will start past 0 and use
@@ -24,32 +25,30 @@ perturbs a 3 x 3 diagonal matrix with unequal entries by a small random matrix,
 then uses the power method to compute the perturbed first eigenvector and
 prints out the results.
 
-## Preliminary steps
+## Project infrastructure:
 
-Project infrastructure:
-
-+ Setup a basic CMake project.
-+ Add library dependencies as submodules or use system packages.
-+ Setup build for basic examples, and expand as time goes on.
-
-### Resources
-
-+ [Stack Overflow: GSL with CMake](https://stackoverflow.com/questions/44821615/linking-gsl-in-cmakelists-txt)
-+ [GSL manual](https://www.gnu.org/software/gsl/doc/html/usage.html)
-+ [Wikipedia: Bessel functions](https://en.wikipedia.org/wiki/Bessel_function)
-+ [matplotplusplus docs](https://alandefreitas.github.io/matplotplusplus/plot-types/line-plots/function-plot/)
-
-See the matplotplusplus readme file for using the library with CMake.
+We have setup a basic CMake project. We will manage library dependencies as either
+as submodules or using system packages. We have kept the build config very basic, but
+will try out other options as the project expands over time.
 
 ## Dependencies
 
 Libraries:
 
-+ matplotplusplus
-+ GSL
-+ Boost
-+ Eigen
+- matplotplusplus
+- GSL
+- Boost
+- Eigen
+
+## Resources
+
+- [Stack Overflow: GSL with CMake](https://stackoverflow.com/questions/44821615/linking-gsl-in-cmakelists-txt)
+- [GSL manual](https://www.gnu.org/software/gsl/doc/html/usage.html)
+- [Wikipedia: Bessel functions](https://en.wikipedia.org/wiki/Bessel_function)
+- [matplotplusplus docs](https://alandefreitas.github.io/matplotplusplus/plot-types/line-plots/function-plot/)
+
+See the matplotplusplus readme file for using the library with CMake.
 
 ## Next ideas
 
-+ This was developed on Linux, but it would be nice to make it build cross-platform.
+- This was developed on Linux, but it would be nice to make it build cross-platform.
