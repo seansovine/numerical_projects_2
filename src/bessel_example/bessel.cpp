@@ -5,7 +5,7 @@
  *  to compare the results.
  */
 
-#include "odeint_runner.hpp"
+#include "odeint_runner.h"
 
 #include <matplot/matplot.h>
 
@@ -36,7 +36,7 @@ struct GslBesseln {
 
 struct BesselRhs {
   // RHS of equation x' = f(x).
-  void operator()(const State_T &x, State_T &dxdt, const double t) {
+  void operator()(const state_t &x, state_t &dxdt, const double t) {
     dxdt[0] = x[1];
     dxdt[1] = -(1 / (t * t)) * (t * x[1] + (t * t - BESSEL_ORDER * BESSEL_ORDER) * x[0]);
     // NOTE: Equation has singularity at 0.
@@ -49,7 +49,7 @@ struct BesselOdeInitializer {
 
   BesselOdeInitializer() {}
 
-  State_T init() {
+  state_t init() {
     initState[0] = gslJn(T_MIN);
     initState[1] = (gslJn(T_MIN + H) - gslJn(T_MIN - H)) / (2 * H);
     return initState;
@@ -57,7 +57,8 @@ struct BesselOdeInitializer {
 
 private:
   GslBesseln gslJn{};
-  State_T initState{};
+  state_t initState{};
+
   // For estimating derivative.
   static constexpr double H = 0.00001;
 };
@@ -79,10 +80,11 @@ struct MatplotStateManager {
 // Main.
 
 int main() {
-  const Results_T odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
-  const TimeSeq_T &time = odeintResult.second;
-  const ResultSeq_T &odeintVals = odeintResult.first;
-  const ResultSeq_T gslJnVals = matplot::transform(time, GslBesseln{});
+  const results_t odeintResult = OdeintBesselRunner{}.run(T_MIN, T_MAX, T_STEP);
+
+  const timeseq_t &time = odeintResult.second;
+  const resultseq_t &odeintVals = odeintResult.first;
+  const resultseq_t gslJnVals = matplot::transform(time, GslBesseln{});
 
   {
     // Configures plot and shows on scope exit.

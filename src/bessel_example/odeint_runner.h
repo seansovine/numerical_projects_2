@@ -6,22 +6,21 @@
 #include <vector>
 
 // For State_T x, x[0] represents f(t) and x[1] represents f'(t).
-using State_T = std::array<double, 2>;
-
-using ResultSeq_T = std::vector<double>;
-using TimeSeq_T = ResultSeq_T;
-using Results_T = std::pair<ResultSeq_T, TimeSeq_T>;
+using state_t = std::array<double, 2>;
+using resultseq_t = std::vector<double>;
+using timeseq_t = resultseq_t;
+using results_t = std::pair<resultseq_t, timeseq_t>;
 
 namespace detail {
 struct StateAndTimeObserver;
 }
 
 template <typename T>
-concept RHS = requires(T a, const State_T &x, State_T &dxdt, const double t) { a(x, dxdt, t); };
+concept RHS = requires(T a, const state_t &x, state_t &dxdt, const double t) { a(x, dxdt, t); };
 
 template <typename T>
 concept Initializer = requires(T a) {
-  { a.init() } -> std::same_as<State_T>;
+  { a.init() } -> std::same_as<state_t>;
 };
 
 template <RHS Rhs, Initializer Init>
@@ -29,28 +28,26 @@ class OdeintRunner {
 public:
   OdeintRunner() { x = Init{}.init(); }
 
-  Results_T run(double inTMin, double inTMax, double inStep);
+  results_t run(const double inTMin, const double inTMax, const double inStep);
 
 private:
-  using X_Results_T_ = std::vector<State_T>;
-
-  State_T x{};
+  state_t x{};
 };
 
 template <RHS Rhs, Initializer Init>
-Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step) {
+results_t OdeintRunner<Rhs, Init>::run(const double tMin, const double tMax, const double step) {
   namespace boostode = boost::numeric::odeint;
 
-  X_Results_T_ x_vec;
-  TimeSeq_T times;
+  std::vector<state_t> x_vec;
+  timeseq_t times;
 
   // With constant stepper and integrator, observer is called at regular intervals.
-  boostode::runge_kutta4<State_T> stepper;
+  boostode::runge_kutta4<state_t> stepper;
   boostode::integrate_const(stepper, Rhs{}, x, tMin, tMax, step, detail::StateAndTimeObserver(x_vec, times));
 
-  ResultSeq_T resultsFOnly{};
+  resultseq_t resultsFOnly{};
   std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
-                 [](const State_T &x) { return x[0]; });
+                 [](const state_t &x) { return x[0]; });
 
   return {resultsFOnly, times};
 }
