@@ -30,9 +30,7 @@ struct StateAndTimeObserver {
 } // namespace detail
 
 template <typename T>
-concept RHS = requires(T a, const State_T &x, State_T &dxdt, const double t) {
-  a(x, dxdt, t);
-};
+concept RHS = requires(T a, const State_T &x, State_T &dxdt, const double t) { a(x, dxdt, t); };
 
 template <typename T>
 concept Initializer = requires(T a) {
@@ -66,7 +64,8 @@ Results_T OdeintRunner<Rhs, Init>::run(double tMin, double tMax, double step) {
   ResultSeq_T resultsFOnly{};
   std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
                  [](const State_T &x) { return x[0]; });
-  return std::make_pair(std::move(resultsFOnly), std::move(times));
+
+  return {resultsFOnly, times};
 }
 
 #endif
