@@ -7,9 +7,8 @@
 
 #include "odeint_runner.h"
 
-#include <matplot/matplot.h>
-
 #include <gsl/gsl_sf_bessel.h>
+#include <matplot/matplot.h>
 
 #include <utility>
 

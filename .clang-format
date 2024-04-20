@@ -16,7 +16,7 @@ SortIncludes: true
 IncludeBlocks: Regroup
 IncludeCategories:
   # Headers in <> from specific external libraries.
-  - Regex:           '<(Eigen|boost|gsl)\/'
+  - Regex:           '<(Eigen|boost|gsl|matplot)\/'
     Priority:        3
   # Headers in <> without extension.
   - Regex:           '<([A-Za-z0-9\Q/-_\E])+>'
