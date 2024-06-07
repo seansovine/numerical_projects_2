@@ -25,9 +25,9 @@ int main() {
 
   // Estimate perturbed eigenvector with power method
   for (size_t i = 0; i < num_iterations; i++) {
-    v_last = v;
+    v_last = std::move(v);
 
-    v = m * v;
+    v = m * v_last;
     v = v / v.norm();
 
     if ((v - v_last).norm() < tolerance) {
@@ -38,6 +38,7 @@ int main() {
   // clang-format off
   std::cout << "Perturbed matrix:" << std::endl
             << m << std::endl
+            << std::endl
             << "Perturbed eigenvector:" << std::endl
             << v << std::endl
             << std::endl
