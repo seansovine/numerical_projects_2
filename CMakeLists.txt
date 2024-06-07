@@ -30,3 +30,5 @@ target_link_libraries(first_example PUBLIC matplot GSL::gsl Boost::boost)
 add_executable(eigen_example src/eigen_example/example.cpp)
 
 target_include_directories(eigen_example PRIVATE "eigen/")
+
+## TODO: Make CMakeLists for each project and use add_subdirectory.
