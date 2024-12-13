@@ -40,6 +40,11 @@ Libraries:
 - Boost
 - Eigen
 
+Note that matplotplusplus and Eigen are included as submodules in this repo, 
+but GSL and Boost are expected to be somewhere that CMake's `find_package`
+can find them. On Linux they can be reliable installed from the package
+manager.
+
 ## Resources
 
 - [Stack Overflow: GSL with CMake](https://stackoverflow.com/questions/44821615/linking-gsl-in-cmakelists-txt)
