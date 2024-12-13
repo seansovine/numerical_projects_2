@@ -9,6 +9,10 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
+# Find Boost the old way; silences warnings.
+# The new was was introduced in 3.30.
+cmake_policy(SET CMP0167 OLD)
+
 # Third-party dependencies
 
 add_subdirectory(matplotplusplus)

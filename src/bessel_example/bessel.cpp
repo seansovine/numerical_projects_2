@@ -46,7 +46,7 @@ struct BesselOdeInitializer {
   // Since we're starting past x = 0, where values are known, we
   // initialize w/ known values from GSL for verification purposes.
 
-  BesselOdeInitializer() {}
+  BesselOdeInitializer() = default;
 
   state_t init() {
     initState[0] = gslJn(T_MIN);

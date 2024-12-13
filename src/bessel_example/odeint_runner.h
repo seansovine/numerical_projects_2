@@ -13,8 +13,9 @@ using results_t = std::pair<resultseq_t, timeseq_t>;
 
 namespace detail {
 
-// Just definining this here for now.
-// Will move definitions if the project grows larger.
+// Similar to boost example, records states and times
+// in the given vectors as the solver is running.
+
 struct StateAndTimeObserver {
   std::vector<state_t> &m_states;
   std::vector<double> &m_times;
@@ -30,6 +31,8 @@ struct StateAndTimeObserver {
 
 } // namespace detail
 
+// Concepts for OdeintRunner parameters.
+
 template <typename T>
 concept RHS = requires(T a, const state_t &x, state_t &dxdt, const double t) { a(x, dxdt, t); };
 
@@ -37,6 +40,9 @@ template <typename T>
 concept Initializer = requires(T a) {
   { a.init() } -> std::same_as<state_t>;
 };
+
+// ------------------------------
+// OdeintRunner class definition.
 
 template <RHS Rhs, Initializer Init>
 class OdeintRunner {
@@ -49,6 +55,8 @@ private:
   state_t x{};
 };
 
+// Run method definition.
+
 template <RHS Rhs, Initializer Init>
 results_t OdeintRunner<Rhs, Init>::run(const double tMin, const double tMax, const double step) {
   namespace boostode = boost::numeric::odeint;
@@ -60,6 +68,7 @@ results_t OdeintRunner<Rhs, Init>::run(const double tMin, const double tMax, con
   boostode::runge_kutta4<state_t> stepper;
   boostode::integrate_const(stepper, Rhs{}, x, tMin, tMax, step, detail::StateAndTimeObserver(x_vec, times));
 
+  // Extract function evaluations from state vec.
   resultseq_t resultsFOnly{};
   std::transform(begin(x_vec), end(x_vec), std::back_inserter(resultsFOnly),
                  [](const state_t &x) { return x[0]; });

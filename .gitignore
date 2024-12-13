@@ -1,4 +1,8 @@
 build/
+cmake-build-debug/
+
+.idea
 .vscode
+
 thirdparty_examples/
 vendor_examples/
